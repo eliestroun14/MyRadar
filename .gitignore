@@ -1,0 +1,10 @@
+*.a
+my_ls
+setting_up
+vgcore.*
+*.txt
+map_to_test/
+test*
+*.o
+a.out
+my_hunter
