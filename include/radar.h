@@ -15,6 +15,12 @@ typedef struct circle_s {
     sfBool alone;
 } circle_t;
 
+typedef struct rectangle_4_s {
+    sfIntRect one;
+    sfIntRect two;
+    sfIntRect three;
+    sfIntRect four;
+} rectangle_4_t;
 
 // bootstrap
 sfRenderWindow *window_init(sfVideoMode mode);

@@ -25,21 +25,6 @@ static int find_letter(char const *str)
     return i;
 }
 
-static int find_sign(char const *str, int nb_start)
-{
-    int i = 1;
-    int sign = 1;
-    char value;
-
-    do {
-        value = str[nb_start - i];
-        if (value == '-')
-            sign = -sign;
-        i++;
-    } while (i <= nb_start && (value == '-' || value == '+'));
-    return sign;
-}
-
 static int build_nbr(char const *str, int nbr_length, int nb_start)
 {
     int i = nbr_length;
@@ -59,8 +44,7 @@ int my_getnbr(char const *str)
     int nb;
     int start = find_digit(str);
     int end = find_letter(str + start) + start;
-    int sign = find_sign(str, start);
 
     nb = build_nbr(str, end - start, start);
-    return nb < 0 ? 0 : nb * sign;
+    return nb < 0 ? 0 : nb;
 }

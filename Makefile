@@ -7,20 +7,27 @@
 
 NAME	= my_radar
 
-#bootstrap
-SRC		= ./src/bootstrap/main.c
-SRC		+=./src/bootstrap/create_circle.c
-SRC		+=./src/bootstrap/intersecting_circles.c
+SRC		= src/main.c
+SRC		+= src/my_radar.c
+SRC		+= src/open/open.c
 
-SRC		+= ./src/fps/print_fps.c
+SRC		+= src/aircrafts/fill_plane.c
+SRC		+= src/aircrafts/destroy_plane.c
+SRC		+= src/tower/fill_tower.c
 
-SRC 	+= ./src/init_textures/window_init.c
+SRC		+= src/csmfl_lib/texture_init.c
+SRC		+= src/csmfl_lib/window_init.c
+SRC		+= src/csmfl_lib/handle_events.c
 
-SRC		+= ./src/handle_events/handle_window_closed.c
+SRC		+= src/simulation/simulation.c
+SRC		+= src/simulation/update_plane.c
+SRC		+= src/simulation/render_simulation.c
 
 OBJS	= $(SRC:.c=.o)
 
-LDFLAGS	= -L. -lmy -I./include/
+LDFLAGS	= -L. -lmy -I include/
+
+CFLAGS = -Wextra -Wall -g
 
 RM		= rm
 
@@ -32,7 +39,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(LIB)
 	gcc -o $(NAME) $(OBJS) -L /usr/lib/ -I/usr/include -lcsfml-graphics \
-		-lcsfml-window -lcsfml-system -lcsfml-audio -lm -g $(LDFLAGS)
+		-lcsfml-window -lcsfml-system -lcsfml-audio -lm $(LDFLAGS)
 
 lib:
 	$(LIB)

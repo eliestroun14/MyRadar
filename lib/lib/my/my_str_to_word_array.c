@@ -7,70 +7,81 @@
 
 #include "my.h"
 #include <stdlib.h>
+#include <stddef.h>
 
-static int is_alphanum(char c)
-{
-    return c != '\0' && (is_digit(c) || is_letter(c));
-}
-
-static int count_words(char const *str)
+char char_word(char const *str, int n, int nl, char ch)
 {
     int i = 0;
-    int nb_words = 0;
+    int sp = 1;
+    int nb = 0;
+    int let = 0;
 
     while (str[i] != '\0') {
-        while (str[i] != '\0' && is_alphanum(str[i]))
-            i++;
-        nb_words++;
-        while (str[i] != '\0' && !is_alphanum(str[i]))
-            i++;
+        if (sp == 1 && str[i] != ch) {
+            sp = 0;
+            nb++;
+        }
+        sp = (str[i] == ch) ? 1 : 0;
+        let += (str[i] != ch && nb == n) ? 1 : 0;
+        if (let == nl)
+            return (str[i]);
+        i++;
     }
-    return nb_words;
+    return ('\0');
 }
 
-static int cound_letters(char const *str)
+int nb_char(char const *str, int n, char ch)
 {
     int i = 0;
+    int sp = 1;
+    int nb = 0;
+    int let = 0;
 
-    while (is_alphanum(str[i]))
-        i++;
-    return i;
-}
-
-static char **allocate_strings(char **tab, char const *str)
-{
-    int current_char = 0;
-    int current_word = 0;
-    int nb_letters;
-
-    while (str[current_char] != '\0') {
-        nb_letters = cound_letters(str + current_char);
-        if (nb_letters == 0) {
-            current_char++;
-            continue;
+    while (str[i] != '\0') {
+        if (sp == 1 && str[i] != ch) {
+            sp = 0;
+            nb++;
         }
-        tab[current_word] = malloc((nb_letters + 1) * sizeof(char));
-        my_strncpy(tab[current_word], str + current_char, nb_letters);
-        current_char += nb_letters;
-        current_word++;
+        sp = (str[i] == ch) ? 1 : 0;
+        let += (str[i] != ch && nb == n) ? 1 : 0;
+        i++;
     }
-    return tab;
+    return (let);
 }
 
-static char **allocate_array(int size)
+int nb_word(char const *str, char ch)
 {
-    char **tab = malloc((size + 1) * sizeof(char *));
+    int i = 0;
+    int sp = 1;
+    int nb = 0;
 
-    tab[size] = NULL;
-    return tab;
+    while (str[i] != '\0') {
+        if (sp == 1 && str[i] != ch) {
+            sp = 0;
+            nb++;
+        }
+        sp = (str[i] == ch) ? 1 : 0;
+        i++;
+    }
+    return (nb);
 }
 
-char **my_str_to_word_array(char const *str)
+char **my_str_to_word_array(char const *str, char ch)
 {
-    char **tab;
-    int nb_words = count_words(str);
+    int y = 0;
+    int x = 0;
+    char **tab = malloc(sizeof(char *) * (nb_word(str, ch) + 1));
 
-    tab = allocate_array(nb_words);
-    allocate_strings(tab, str);
-    return tab;
+    while (y < nb_word(str, ch)) {
+        tab[y] = malloc(sizeof(char) * (nb_char(str, y + 1, ch) + 1));
+        x = 0;
+        while (x < nb_char(str, y + 1, ch)) {
+            tab[y][x] = char_word(str, y + 1, x + 1, ch);
+            x++;
+        }
+        tab[y][x] = '\0';
+        y++;
+    }
+    tab[y] = 0;
+    return (tab);
 }
