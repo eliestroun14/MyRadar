@@ -5,11 +5,10 @@
 ** my_radar
 */
 
-#include <SFML/Graphics.h>
-#include <stdbool.h>
-
 #ifndef MY_RADAR_H_
     #define MY_RADAR_H_
+    #include <SFML/Graphics.h>
+    #include <stdbool.h>
 
 typedef struct vector_s {
     int x;

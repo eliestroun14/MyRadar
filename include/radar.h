@@ -8,7 +8,7 @@
 #ifndef RADAR_H_
     #define RADAR_H_
 
-#include <SFML/Graphics.h>
+    #include <SFML/Graphics.h>
 
 typedef struct circle_s {
     sfCircleShape *circle;
