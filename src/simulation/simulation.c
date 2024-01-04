@@ -19,19 +19,34 @@ int init_game(game_t *my_game)
     my_game->map_sprite = sfSprite_create();
     sfSprite_setTexture(my_game->map_sprite, my_game->map_texture, sfTrue);
     my_game->game_clock = sfClock_create();
+    my_game->timer = sfClock_create();
     sfRenderWindow_setFramerateLimit(my_game->window, 60);
     return 0;
 }
 
-//destroy_game();
+int exit_game(game_t *my_game)
+{
+    sfClock_destroy(my_game->game_clock);
+    sfClock_destroy(my_game->timer);
+    sfSprite_destroy(my_game->map_sprite);
+    sfTexture_destroy(my_game->map_texture);
+    sfRenderWindow_close(my_game->window);
+    sfRenderWindow_destroy(my_game->window);
+    return 0;
+}
+
 int simulation(game_t *my_game, tower_t **tower_tab)
 {
     if (init_game(my_game) == 84)
         return 84;
-    while (sfRenderWindow_isOpen(my_game->window)) {
+    while (sfRenderWindow_isOpen(my_game->window) && my_game->head != NULL) {
+        render_simulation(my_game, tower_tab);
         handle_event(my_game);
         update_plane(my_game, tower_tab);
-        render_simulation(my_game, tower_tab);
+        if (my_game->head == NULL) {
+            exit_game(my_game);
+            return 0;
+        }
     }
     return 0;
 }

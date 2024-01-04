@@ -19,6 +19,7 @@ typedef struct aircraft_s {
     int id;
     int speed;
     int delay;
+    bool is_waiting;
     sfVector2f *pos;
     sfVector2f dest;
     sfTexture *texture;
@@ -43,6 +44,7 @@ typedef struct game_s {
     radar_link_list_t *head;
     sfRenderWindow *window;
     sfClock *game_clock;
+    sfClock *timer;
     sfTexture *map_texture;
     sfSprite *map_sprite;
     sfEvent event;
@@ -76,7 +78,12 @@ sfTexture *texture_init(char const *path);
 sfRenderWindow *window_init(int mode_size1, int mode_size2, char *name);
 int handle_event(game_t *my_game);
 void render_simulation(game_t *my_game, tower_t **tower_tab);
+char *int_to_char(int nbr);
+float calculate_angle(sfVector2f point1, sfVector2f point2);
 
-    #define P_sprite plane->sprite
-    #define P_texture plane->texture
+    #define P_SPRITE plane->sprite
+    #define P_TEXTURE plane->texture
+    #define WIDTH 285
+    #define HEIGHT 268
+
 #endif /* !MY_RADAR_H_ */

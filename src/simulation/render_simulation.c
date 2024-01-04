@@ -8,7 +8,7 @@
 #include "../../include/my_radar.h"
 #include <stddef.h>
 
-void show_sprites(game_t *my_game, tower_t **tower_tab)
+static void show_sprites(game_t *my_game, tower_t **tower_tab)
 {
     radar_link_list_t *tmp = my_game->head;
 
@@ -22,7 +22,7 @@ void show_sprites(game_t *my_game, tower_t **tower_tab)
     }
 }
 
-void show_hitboxes(game_t *my_game, tower_t **tower_tab)
+static void show_hitboxes(game_t *my_game, tower_t **tower_tab)
 {
     radar_link_list_t *tmp = my_game->head;
 
@@ -37,7 +37,46 @@ void show_hitboxes(game_t *my_game, tower_t **tower_tab)
     }
 }
 
-//sfRenderWindow_drawText(my_game->window, my_game->score->pts, NULL);
+static void set_text(char *minutes, char *seconds, sfFont *font,
+    sfRenderWindow *window)
+{
+    sfText *text_min;
+    sfText *text_sec;
+
+    text_sec = sfText_create();
+    text_min = sfText_create();
+    sfText_setString(text_min, minutes);
+    sfText_setString(text_sec, seconds);
+    sfText_setFont(text_min, font);
+    sfText_setFont(text_sec, font);
+    sfText_setCharacterSize(text_min, 50);
+    sfText_setCharacterSize(text_sec, 50);
+    sfText_setColor(text_min, sfRed);
+    sfText_setColor(text_sec, sfRed);
+    sfText_setPosition(text_min, (sfVector2f){1815, 0});
+    sfText_setPosition(text_sec, (sfVector2f){1860, 0});
+    sfRenderWindow_drawText(window, text_min, NULL);
+    sfRenderWindow_drawText(window, text_sec, NULL);
+}
+
+static int show_timer(sfClock *timer, sfRenderWindow *window)
+{
+    sfTime time = sfClock_getElapsedTime(timer);
+    sfFont *font;
+    float sec = time.microseconds / 1000000.0f;
+    int min = 0;
+    char *minutes;
+    char *seconds;
+
+    for (; sec - 60 >= 0; sec -= 60)
+        min++;
+    minutes = int_to_char(min);
+    seconds = int_to_char(sec);
+    font = sfFont_createFromFile("assets/font.otf");
+    set_text(minutes, seconds, font, window);
+    return 0;
+}
+
 void render_simulation(game_t *my_game, tower_t **tower_tab)
 {
     sfRenderWindow_clear(my_game->window, sfGreen);
@@ -48,5 +87,6 @@ void render_simulation(game_t *my_game, tower_t **tower_tab)
     if (my_game->show_hitboxes) {
         show_hitboxes(my_game, tower_tab);
     }
+    show_timer(my_game->timer, my_game->window);
     sfRenderWindow_display(my_game->window);
 }

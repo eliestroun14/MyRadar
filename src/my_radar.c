@@ -13,30 +13,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-/*disp(global);
-    my_printf("j'ai disp\n\n");
-    for (int i = 0; tab_tower[i] != NULL; i++) {
-        my_printf("tab_tower[%d] radius = %d / pos = %d / %d\n", i,
-        tab_tower[i]->radius, tab_tower[i]->pos.x, tab_tower[i]->pos.y);
-    }*/
-/* static int disp(game_t *global)
-{
-    radar_link_list_t *tmp = NULL;
-
-    tmp = global->head;
-    while (tmp != NULL) {
-        my_printf("node[%d]\n", tmp->plane->id);
-        my_printf("node_pos = [%d / %d]\n", tmp->plane->pos->x,
-            tmp->plane->pos->y);
-        my_printf("node_dest = [%d / %d]\n", tmp->plane->dest.x,
-            tmp->plane->dest.y);
-        my_printf("node_speed = [%d]\n", tmp->plane->speed);
-        my_printf("node_delay = [%d]\n", tmp->plane->delay);
-        tmp = tmp->next;
-    }
-    return 0;
-} */
-
 static void free_tab_info(char ***tab_info)
 {
     for (int k = 0; (*tab_info)[k] != NULL; k++)

@@ -4,15 +4,9 @@
 ** File description:
 ** move_plane
 */
-
 #include "../../include/my.h"
 #include "../../include/my_radar.h"
 #include <math.h>
-
-static float calculate_angle(sfVector2f point1, sfVector2f point2)
-{
-    return atan2(point2.y - point1.y, point2.x - point1.x) * 180 / M_PI;
-}
 
 static void plane_face_dest(sfVector2f plane_pos, sfVector2f plane_dest,
     aircraft_t *plane)
@@ -20,12 +14,9 @@ static void plane_face_dest(sfVector2f plane_pos, sfVector2f plane_dest,
     int angle = calculate_angle(plane_pos, plane_dest);
 
     sfSprite_setRotation(plane->sprite, angle);
-    sfRectangleShape_setOrigin(plane->rect, (sfVector2f){-4.5, -4.5});
-    sfRectangleShape_setRotation(plane->rect, angle);
 }
 
-sfVector2f set_direction(sfVector2f *direction,
-    radar_link_list_t *tmp)
+static sfVector2f set_direction(sfVector2f *direction, radar_link_list_t *tmp)
 {
     sfVector2f tmp_dir = *direction;
     float length = 0;
@@ -47,10 +38,10 @@ static int move_plane(game_t *my_game)
 
     while (tmp != NULL) {
         direction = set_direction(&direction, tmp);
-        if (tmp->plane->pos->x != tmp->plane->dest.x)
-            tmp->plane->pos->x += (tmp->plane->speed * 5) * direction.x * sec;
-        if (tmp->plane->pos->y != tmp->plane->dest.y)
-            tmp->plane->pos->y += (tmp->plane->speed * 5) * direction.y * sec;
+        if (tmp->plane->pos->x != tmp->plane->dest.x && tmp->plane->is_waiting)
+            tmp->plane->pos->x += (tmp->plane->speed) * direction.x * sec;
+        if (tmp->plane->pos->y != tmp->plane->dest.y && tmp->plane->is_waiting)
+            tmp->plane->pos->y += (tmp->plane->speed) * direction.y * sec;
         sfSprite_setPosition(tmp->plane->sprite, *tmp->plane->pos);
         sfRectangleShape_setPosition(tmp->plane->rect, *tmp->plane->pos);
         plane_face_dest(*tmp->plane->pos, tmp->plane->dest, tmp->plane);
@@ -76,35 +67,54 @@ static sfBool planes_collides(sfRectangleShape *rect1, sfRectangleShape *rect2)
     return sfFalse;
 }
 
-/* sfBool is_in_range_tower(sfRectangleShape *rect1, sfRectangleShape *rect2,
+static void set_centers(sfVector2f *center1, sfVector2f *center2,
+    sfRectangleShape *rect1, sfRectangleShape *rect2)
+{
+    center1->x = sfRectangleShape_getPosition(rect1).x +
+        sfRectangleShape_getSize(rect1).x / 2;
+    center1->y = sfRectangleShape_getPosition(rect1).y +
+        sfRectangleShape_getSize(rect1).y / 2;
+    center2->x = sfRectangleShape_getPosition(rect2).x +
+        sfRectangleShape_getSize(rect2).x / 2;
+    center2->y = sfRectangleShape_getPosition(rect2).y +
+        sfRectangleShape_getSize(rect2).y / 2;
+}
+
+sfBool is_in_range_tower(sfRectangleShape *rect1, sfRectangleShape *rect2,
     tower_t **tower_tab)
 {
-    sfVector2f center1, center2;
-    center1.x = sfRectangleShape_getPosition(rect1).x +
-        sfRectangleShape_getSize(rect1).x / 2;
-    center1.y = sfRectangleShape_getPosition(rect1).y +
-        sfRectangleShape_getSize(rect1).y / 2;
-    center2.x = sfRectangleShape_getPosition(rect2).x +
-        sfRectangleShape_getSize(rect2).x / 2;
-    center2.y = sfRectangleShape_getPosition(rect2).y +
-        sfRectangleShape_getSize(rect2).y / 2;
+    sfVector2f center1;
+    sfVector2f center2;
+    float distance1;
+    float distance2;
 
-    float distance;
+    set_centers(&center1, &center2, rect1, rect2);
     for (int i = 0; tower_tab[i] != NULL; ++i) {
-        distance = sqrt(pow(center1.x - tower_tab[i]->pos.x, 2) +
+        distance1 = sqrt(pow(center1.x - tower_tab[i]->pos.x, 2) +
             pow(center1.y - tower_tab[i]->pos.y, 2));
-        if (distance <= tower_tab[i]->rad) {
-            distance = sqrt(pow(center2.x - tower_tab[i]->pos.x, 2) +
-                pow(center2.y - tower_tab[i]->pos.y, 2));
-            if (distance <= tower_tab[i]->rad) {
-                return sfTrue;
-            }
-        }
+        distance2 = sqrt(pow(center2.x - tower_tab[i]->pos.x, 2) +
+            pow(center2.y - tower_tab[i]->pos.y, 2));
+        if (distance1 <= tower_tab[i]->rad && distance2 <= tower_tab[i]->rad)
+            return sfTrue;
     }
     return sfFalse;
-} */
+}
 
-/* int check_collisions(game_t *my_game, tower_t **tower_tab)
+void sub_check_collisions(radar_link_list_t *list1, radar_link_list_t *list2,
+    tower_t **tower_tab, game_t *my_game)
+{
+    if (list1->plane->id == list2->plane->id)
+        return;
+    if (planes_collides(list1->plane->rect, list2->plane->rect)) {
+        if (!is_in_range_tower(list1->plane->rect, list2->plane->rect,
+            tower_tab)) {
+            destroy_plane(list1->plane->id, list2->plane->id, my_game);
+        }
+    }
+    return;
+}
+
+int check_collisions(game_t *my_game, tower_t **tower_tab)
 {
     radar_link_list_t *list1 = my_game->head;
     radar_link_list_t *list2;
@@ -112,22 +122,14 @@ static sfBool planes_collides(sfRectangleShape *rect1, sfRectangleShape *rect2)
     while (list1 != NULL) {
         list2 = my_game->head;
         while (list2 != NULL) {
-            //if (list1->plane->id == list2->plane->id)
-            //    continue;
-            if (planes_collides(list1->plane->rect, list2->plane->rect)) {
-                if (is_in_range_tower(list1->plane->rect, list2->plane->rect,
-                    tower_tab) ==  sfTrue) {
-                    my_printf("in range tower");
-                    destroy_plane(list1->plane->id, list2->plane->id, my_game);
-                }
-
-            }
+            sub_check_collisions(list1, list2, tower_tab, my_game);
             list2 = list2->next;
         }
         list1 = list1->next;
     }
     return 0;
-} */
+}
+
 int planes_arrived(game_t *my_game)
 {
     radar_link_list_t *tmp = my_game->head;
@@ -142,7 +144,7 @@ int planes_arrived(game_t *my_game)
             && (int)tmp->plane->pos->x < ((int)tmp->plane->dest.x + (float)vel)
             && ((int)tmp->plane->dest.y - (float)vel) < (int)tmp->plane->pos->y
             && (int)tmp->plane->pos->y < ((int)tmp->plane->dest.y +
-            (float)vel)) {
+            (float)vel) && tmp->plane->is_waiting) {
             del_plane(tmp, previous, &my_game->head);
             my_game->plane_count--;
         }
@@ -152,10 +154,19 @@ int planes_arrived(game_t *my_game)
     return 0;
 }
 
-//check_collisions(my_game, tower_tab);
 int update_plane(game_t *my_game, tower_t **tower_tab)
 {
+    sfTime time = sfClock_getElapsedTime(my_game->timer);
+    float seconds = time.microseconds / 1000000.0f;
+    radar_link_list_t *tmp = my_game->head;
+
+    while (tmp != NULL) {
+        if ((int)seconds >= tmp->plane->delay)
+            tmp->plane->is_waiting = true;
+        tmp = tmp->next;
+    }
     planes_arrived(my_game);
     move_plane(my_game);
+    check_collisions(my_game, tower_tab);
     return 0;
 }

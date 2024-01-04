@@ -14,7 +14,8 @@ sfCircleShape *create_circle(sfVector2f position, float radius)
     sfCircleShape *circle = sfCircleShape_create();
 
     sfCircleShape_setRadius(circle, radius);
-    sfCircleShape_setPosition(circle, position);
+    sfCircleShape_setPosition(circle, (sfVector2f){position.x - radius,
+        position.y - radius});
     sfCircleShape_setFillColor(circle, sfTransparent);
     sfCircleShape_setOutlineThickness(circle, 1.0f);
     sfCircleShape_setOutlineColor(circle, sfRed);
@@ -43,6 +44,7 @@ tower_t **fill_tower(char **sub_tab, tower_t **tower_tab, int *nb_tower)
     for (int j = 0; j <= i; j++)
         new_tab[j] = tower_tab[j];
     fill_tab(new_tab, sub_tab, i);
+    sfSprite_setOrigin(new_tab[i]->sprite, (sfVector2f){250, 250});
     sfSprite_setPosition(new_tab[i]->sprite, new_tab[i]->pos);
     sfSprite_setTexture(new_tab[i]->sprite, new_tab[i]->texture, sfTrue);
     sfSprite_scale(new_tab[i]->sprite, (sfVector2f){0.1, 0.1});

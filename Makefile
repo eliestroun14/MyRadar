@@ -23,6 +23,8 @@ SRC		+= src/simulation/simulation.c
 SRC		+= src/simulation/update_plane.c
 SRC		+= src/simulation/render_simulation.c
 
+SRC		+= src/int_to_char.c
+
 OBJS	= $(SRC:.c=.o)
 
 LDFLAGS	= -L. -lmy -I include/
