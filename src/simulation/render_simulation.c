@@ -79,6 +79,25 @@ static int show_timer(sfClock *timer, sfRenderWindow *window)
     return 0;
 }
 
+static int show_sp(game_t *my_game)
+{
+    int speed_to_char = SP;
+    char *speed_char;
+    sfText *text_sp = sfText_create();
+    sfFont *font = sfFont_createFromFile("assets/font.otf");
+
+    if (SP >= 1) {
+        speed_char = int_to_char(speed_to_char);
+        sfText_setString(text_sp, speed_char);
+        sfText_setFont(text_sp, font);
+        sfText_setCharacterSize(text_sp, 50);
+        sfText_setColor(text_sp, sfRed);
+        sfText_setPosition(text_sp, (sfVector2f){10, 0});
+        sfRenderWindow_drawText(my_game->window, text_sp, NULL);
+    }
+    return 0;
+}
+
 void render_simulation(game_t *my_game, tower_t **tower_tab)
 {
     sfRenderWindow_clear(my_game->window, sfWhite);
@@ -90,5 +109,6 @@ void render_simulation(game_t *my_game, tower_t **tower_tab)
         show_hitboxes(my_game, tower_tab);
     }
     show_timer(my_game->timer, my_game->window);
+    show_sp(my_game);
     sfRenderWindow_display(my_game->window);
 }

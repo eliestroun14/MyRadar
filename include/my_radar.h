@@ -17,7 +17,7 @@ typedef struct vector_s {
 
 typedef struct aircraft_s {
     int id;
-    int speed;
+    float speed;
     int delay;
     bool is_waiting;
     sfVector2f *pos;
@@ -52,6 +52,8 @@ typedef struct game_s {
     bool show_sprites;
     int plane_count;
     int id_nb;
+    int tower_nb;
+    float sp_aumgent;
 } game_t;
 
 
@@ -67,7 +69,7 @@ int del_plane(radar_link_list_t *tmp, radar_link_list_t *previous,
     radar_link_list_t **head);
 
 //tower_t array
-tower_t **fill_tower(char **sub_tab, tower_t **tower_tab, int *nb_tower);
+tower_t **fill_tower(char **sub_tab, tower_t **tower_tab, game_t *global);
 
 // update plane
 int update_plane(game_t *my_game, tower_t **tower_tab);
@@ -85,5 +87,6 @@ float calculate_angle(sfVector2f point1, sfVector2f point2);
     #define P_TEXTURE plane->texture
     #define WIDTH 285
     #define HEIGHT 268
+    #define SP my_game->sp_aumgent
 
 #endif /* !MY_RADAR_H_ */

@@ -25,6 +25,8 @@ int handle_dash_h(char const *av)
         my_printf("USER INTERACTIONS\n");
         my_printf("\t'L' key\tenable/disable hitboxes and areas.\n");
         my_printf("\t'S' key\tenable/disable sprites.\n");
+        my_printf("\t'I' key\tplane speed x2 (printed in left top corner).\n");
+        my_printf("\t'D' key\tplane speed /2 (not printed if < 1).\n");
     return 1;
     } else
         return 0;

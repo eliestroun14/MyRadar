@@ -12,6 +12,7 @@ int init_game(game_t *my_game)
 {
     my_game->show_hitboxes = true;
     my_game->show_sprites = true;
+    SP = 1;
     my_game->window = window_init(1920, 1080, "Radar simulation");
     if (my_game->window == NULL)
         return 84;

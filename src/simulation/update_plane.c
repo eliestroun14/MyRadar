@@ -39,9 +39,9 @@ static int move_plane(game_t *my_game)
     while (tmp != NULL) {
         direction = set_direction(&direction, tmp);
         if (tmp->plane->pos->x != tmp->plane->dest.x && tmp->plane->is_waiting)
-            tmp->plane->pos->x += (tmp->plane->speed) * direction.x * sec;
+            tmp->plane->pos->x += (tmp->plane->speed) * direction.x * sec * SP;
         if (tmp->plane->pos->y != tmp->plane->dest.y && tmp->plane->is_waiting)
-            tmp->plane->pos->y += (tmp->plane->speed) * direction.y * sec;
+            tmp->plane->pos->y += (tmp->plane->speed) * direction.y * sec * SP;
         sfSprite_setPosition(tmp->plane->sprite, *tmp->plane->pos);
         sfRectangleShape_setPosition(tmp->plane->rect, *tmp->plane->pos);
         plane_face_dest(*tmp->plane->pos, tmp->plane->dest, tmp->plane);
@@ -136,15 +136,15 @@ int planes_arrived(game_t *my_game)
     radar_link_list_t *tmp = my_game->head;
     radar_link_list_t *previous = NULL;
     radar_link_list_t *savior = NULL;
-    int vel;
+    float vel;
 
     while (tmp != NULL) {
         savior = tmp->next;
         vel = tmp->plane->speed;
-        if (((int)tmp->plane->dest.x - (float)vel) < (int)tmp->plane->pos->x
-            && (int)tmp->plane->pos->x < ((int)tmp->plane->dest.x + (float)vel)
-            && ((int)tmp->plane->dest.y - (float)vel) < (int)tmp->plane->pos->y
-            && (int)tmp->plane->pos->y < ((int)tmp->plane->dest.y +
+        if (((float)tmp->plane->dest.x - (float)vel) < (float)tmp->plane->pos->x
+            && (float)tmp->plane->pos->x < ((float)tmp->plane->dest.x + (float)vel)
+            && ((float)tmp->plane->dest.y - (float)vel) < (float)tmp->plane->pos->y
+            && (float)tmp->plane->pos->y < ((float)tmp->plane->dest.y +
             (float)vel) && tmp->plane->is_waiting) {
             del_plane(tmp, previous, &my_game->head);
             my_game->plane_count--;
