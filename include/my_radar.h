@@ -88,5 +88,6 @@ float calculate_angle(sfVector2f point1, sfVector2f point2);
     #define WIDTH 285
     #define HEIGHT 268
     #define SP my_game->sp_aumgent
+    #define ET my_game->event.type
 
 #endif /* !MY_RADAR_H_ */
