@@ -141,9 +141,9 @@ int planes_arrived(game_t *my_game)
     while (tmp != NULL) {
         savior = tmp->next;
         vel = tmp->plane->speed;
-        if (((float)tmp->plane->dest.x - (float)vel) < (float)tmp->plane->pos->x
-            && (float)tmp->plane->pos->x < ((float)tmp->plane->dest.x + (float)vel)
-            && ((float)tmp->plane->dest.y - (float)vel) < (float)tmp->plane->pos->y
+        if (((float)tmp->plane->dest.x - vel) < (float)tmp->plane->pos->x
+            && (float)tmp->plane->pos->x < ((float)tmp->plane->dest.x + vel)
+            && ((float)tmp->plane->dest.y - vel) < (float)tmp->plane->pos->y
             && (float)tmp->plane->pos->y < ((float)tmp->plane->dest.y +
             (float)vel) && tmp->plane->is_waiting) {
             del_plane(tmp, previous, &my_game->head);
