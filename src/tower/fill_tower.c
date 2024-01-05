@@ -33,15 +33,26 @@ void fill_tab(tower_t **new_tab, char **sub_tab, int i)
     new_tab[i]->sprite = sfSprite_create();
 }
 
-tower_t **fill_tower(char **sub_tab, tower_t **tower_tab, int *nb_tower)
+static int check_param(char **sub_tab)
+{
+    int i = 0;
+
+    for (; sub_tab[i] != NULL; i++);
+    if (i != 4)
+        return 0;
+    return 1;
+}
+
+tower_t **fill_tower(char **sub_tab, tower_t **tower_tab, game_t *global)
 {
     tower_t **new_tab = NULL;
-    int i = 0;
+    int i = global->tower_nb;
     int null_end = 1;
 
-    for (; tower_tab[i] != NULL; i++);
+    if (!check_param(sub_tab))
+        return NULL;
     new_tab = malloc(sizeof(tower_t *) * (i + null_end + 1));
-    for (int j = 0; j <= i; j++)
+    for (int j = 0; j < i; j++)
         new_tab[j] = tower_tab[j];
     fill_tab(new_tab, sub_tab, i);
     sfSprite_setOrigin(new_tab[i]->sprite, (sfVector2f){250, 250});
@@ -50,6 +61,6 @@ tower_t **fill_tower(char **sub_tab, tower_t **tower_tab, int *nb_tower)
     sfSprite_scale(new_tab[i]->sprite, (sfVector2f){0.1, 0.1});
     new_tab[i + null_end] = NULL;
     free(tower_tab);
-    (*nb_tower) += 1;
+    global->tower_nb += 1;
     return new_tab;
 }

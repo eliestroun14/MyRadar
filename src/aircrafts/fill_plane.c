@@ -56,10 +56,22 @@ static void fill_struct(game_t *global, char **sub_tab)
     global->head = new_node;
 }
 
-//if (!check_param())
-// return 0;
+static int check_param(char **sub_tab)
+{
+    int i = 0;
+
+    for (; sub_tab[i] != NULL; i++);
+    if (i != 7)
+        return 0;
+    return 1;
+}
+
 int fill_plane(char **sub_tab, game_t *global)
 {
+    if (!check_param(sub_tab)) {
+        my_printf("invalid format for plane\n");
+        return 84;
+    }
     global->plane_count++;
     fill_struct(global, sub_tab);
     global->id_nb++;

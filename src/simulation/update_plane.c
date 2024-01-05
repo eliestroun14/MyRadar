@@ -103,7 +103,8 @@ sfBool is_in_range_tower(sfRectangleShape *rect1, sfRectangleShape *rect2,
 void sub_check_collisions(radar_link_list_t *list1, radar_link_list_t *list2,
     tower_t **tower_tab, game_t *my_game)
 {
-    if (list1->plane->id == list2->plane->id)
+    if (list1->plane->id == list2->plane->id || !list1->plane->is_waiting ||
+        !list2->plane->is_waiting)
         return;
     if (planes_collides(list1->plane->rect, list2->plane->rect)) {
         if (!is_in_range_tower(list1->plane->rect, list2->plane->rect,

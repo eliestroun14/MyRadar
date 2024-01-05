@@ -16,7 +16,7 @@ static void del_head(radar_link_list_t *tmp, radar_link_list_t **begin)
     return;
 }
 
-static void del_tail(radar_link_list_t *tmp, radar_link_list_t *previous)
+static void del_tail(radar_link_list_t *previous)
 {
     previous->next = NULL;
     return;
@@ -30,7 +30,7 @@ int del_plane(radar_link_list_t *tmp, radar_link_list_t *previous,
         return 1;
     }
     if (tmp->next == NULL) {
-        del_tail(tmp, previous);
+        del_tail(previous);
         return 1;
     } else {
         previous->next = tmp->next;

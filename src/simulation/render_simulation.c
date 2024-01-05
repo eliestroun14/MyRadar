@@ -13,11 +13,13 @@ static void show_sprites(game_t *my_game, tower_t **tower_tab)
     radar_link_list_t *tmp = my_game->head;
 
     for (int i = 0; tower_tab[i] != NULL; ++i) {
-            sfRenderWindow_drawSprite(my_game->window, tower_tab[i]->sprite,
-                NULL);
+        sfRenderWindow_drawSprite(my_game->window, tower_tab[i]->sprite,
+            NULL);
     }
     while (tmp != NULL) {
+        if (tmp->plane->is_waiting) {
         sfRenderWindow_drawSprite(my_game->window, tmp->plane->sprite, NULL);
+        }
         tmp = tmp->next;
     }
 }
@@ -31,8 +33,10 @@ static void show_hitboxes(game_t *my_game, tower_t **tower_tab)
                 tower_tab[i]->rad_circle, NULL);
     }
     while (tmp != NULL) {
+        if (tmp->plane->is_waiting) {
         sfRenderWindow_drawRectangleShape(my_game->window,
         tmp->plane->rect, NULL);
+        }
         tmp = tmp->next;
     }
 }
@@ -40,11 +44,9 @@ static void show_hitboxes(game_t *my_game, tower_t **tower_tab)
 static void set_text(char *minutes, char *seconds, sfFont *font,
     sfRenderWindow *window)
 {
-    sfText *text_min;
-    sfText *text_sec;
+    sfText *text_min = sfText_create();
+    sfText *text_sec = sfText_create();
 
-    text_sec = sfText_create();
-    text_min = sfText_create();
     sfText_setString(text_min, minutes);
     sfText_setString(text_sec, seconds);
     sfText_setFont(text_min, font);
@@ -53,8 +55,8 @@ static void set_text(char *minutes, char *seconds, sfFont *font,
     sfText_setCharacterSize(text_sec, 50);
     sfText_setColor(text_min, sfRed);
     sfText_setColor(text_sec, sfRed);
-    sfText_setPosition(text_min, (sfVector2f){1815, 0});
-    sfText_setPosition(text_sec, (sfVector2f){1860, 0});
+    sfText_setPosition(text_min, (sfVector2f){1810, 0});
+    sfText_setPosition(text_sec, (sfVector2f){1855, 0});
     sfRenderWindow_drawText(window, text_min, NULL);
     sfRenderWindow_drawText(window, text_sec, NULL);
 }
@@ -79,7 +81,7 @@ static int show_timer(sfClock *timer, sfRenderWindow *window)
 
 void render_simulation(game_t *my_game, tower_t **tower_tab)
 {
-    sfRenderWindow_clear(my_game->window, sfGreen);
+    sfRenderWindow_clear(my_game->window, sfWhite);
     sfRenderWindow_drawSprite(my_game->window, my_game->map_sprite, NULL);
     if (my_game->show_sprites) {
         show_sprites(my_game, tower_tab);
