@@ -30,7 +30,7 @@ static void show_hitboxes(game_t *my_game, tower_t **tower_tab)
 
     for (int i = 0; tower_tab[i] != NULL; ++i) {
             sfRenderWindow_drawCircleShape(my_game->window,
-                tower_tabcs[i]->rad_circle, NULL);
+                tower_tab[i]->rad_circle, NULL);
     }
     while (tmp != NULL) {
         if (tmp->plane->is_waiting) {
